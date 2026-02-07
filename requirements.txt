@@ -1,4 +1,7 @@
 streamlit
-pandas
-beautifulsoup4
+crewai
+langchain-community
+duckduckgo-search
 requests
+beautifulsoup4
+pydantic
