@@ -16,6 +16,8 @@ try:
     KEYGEN_ACCOUNT_ID = st.secrets.get("KEYGEN_ACCOUNT_ID", "")
 except:
     pass
+if not KEYGEN_ACCOUNT_ID:
+    KEYGEN_ACCOUNT_ID = os.environ.get("KEYGEN_ACCOUNT_ID", "")
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'

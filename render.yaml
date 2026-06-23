@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: signaliq
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run app.py --server.port $PORT --server.address 0.0.0.0
+    envVars:
+      - key: HUGGINGFACE_API_KEY
+        sync: false
+      - key: KEYGEN_ACCOUNT_ID
+        sync: false
