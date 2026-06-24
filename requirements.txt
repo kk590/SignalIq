@@ -1,6 +1,4 @@
 streamlit
-crewai
-langchain-community
 duckduckgo-search
 requests
 beautifulsoup4
