@@ -8,9 +8,7 @@ from datetime import datetime
 from duckduckgo_search import DDGS
 from langchain_core.tools import tool
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.messages import SystemMessage
+from langgraph.prebuilt import create_react_agent
 
 KEYGEN_ACCOUNT_ID = ""
 try:
@@ -122,14 +120,7 @@ def web_scraper(target: str) -> str:
 # ORCHESTRATOR
 # ============================================================
 def create_agent(llm, tools, system_prompt):
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", system_prompt),
-        ("placeholder", "{chat_history}"),
-        ("human", "{input}"),
-        ("placeholder", "{agent_scratchpad}"),
-    ])
-    agent = create_tool_calling_agent(llm, tools, prompt)
-    return AgentExecutor(agent=agent, tools=tools, verbose=True)
+    return create_react_agent(llm, tools=tools, state_modifier=system_prompt)
 
 
 def run_multi_agent_system(mode, target, hf_key, model_id):
@@ -151,16 +142,17 @@ def run_multi_agent_system(mode, target, hf_key, model_id):
         scout_input = f"Search the web and find 5 businesses in this niche: '{target}'. For each business list the name, URL, and a short description."
         if st.session_state.get('verbose', True):
             st.write(f"  👤 **Lead Scout** is working…")
-        scout_result = scout_agent.invoke({"input": scout_input})
+        scout_result = scout_agent.invoke({"messages": [("user", scout_input)]})
+        scout_output = scout_result["messages"][-1].content
         
-        ceo_input = f"Review the leads found by the Lead Scout. Rank them by potential and explain why each is a good lead.\n\nLead Scout Findings:\n{scout_result['output']}"
+        ceo_input = f"Review the leads found by the Lead Scout. Rank them by potential and explain why each is a good lead.\n\nLead Scout Findings:\n{scout_output}"
         if st.session_state.get('verbose', True):
             st.write(f"  ✅ **Lead Scout** finished.")
             st.write(f"  👤 **CEO** is working…")
-        ceo_result = ceo_agent.invoke({"input": ceo_input})
+        ceo_result = ceo_agent.invoke({"messages": [("user", ceo_input)]})
         if st.session_state.get('verbose', True):
             st.write(f"  ✅ **CEO** finished.")
-        return ceo_result['output']
+        return ceo_result["messages"][-1].content
 
     else:
         cto_prompt = "You are the CTO. Your goal is to audit technical infrastructure. Use the web_scraper and ssl_inspector tools to analyze the given website."
@@ -169,16 +161,17 @@ def run_multi_agent_system(mode, target, hf_key, model_id):
         cto_input = f"Audit this website: {target}. Use the web_scraper tool to analyze its code and the ssl_inspector tool to check its certificate. Report your findings in detail."
         if st.session_state.get('verbose', True):
             st.write(f"  👤 **CTO** is working…")
-        cto_result = cto_agent.invoke({"input": cto_input})
+        cto_result = cto_agent.invoke({"messages": [("user", cto_input)]})
+        cto_output = cto_result["messages"][-1].content
         
-        ceo_input = f"Review the CTO's audit findings. Write an executive summary with actionable recommendations.\n\nCTO Findings:\n{cto_result['output']}"
+        ceo_input = f"Review the CTO's audit findings. Write an executive summary with actionable recommendations.\n\nCTO Findings:\n{cto_output}"
         if st.session_state.get('verbose', True):
             st.write(f"  ✅ **CTO** finished.")
             st.write(f"  👤 **CEO** is working…")
-        ceo_result = ceo_agent.invoke({"input": ceo_input})
+        ceo_result = ceo_agent.invoke({"messages": [("user", ceo_input)]})
         if st.session_state.get('verbose', True):
             st.write(f"  ✅ **CEO** finished.")
-        return ceo_result['output']
+        return ceo_result["messages"][-1].content
 
 
 # ============================================================
