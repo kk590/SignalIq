@@ -6,3 +6,7 @@ requests
 beautifulsoup4
 pydantic
 pandas
+langchain
+langchain-core
+langchain-community
+langchain-huggingface
