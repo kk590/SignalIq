@@ -1,3 +1,5 @@
+gunicorn
+uvicorn[standard]
 streamlit
 duckduckgo-search
 requests
