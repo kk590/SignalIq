@@ -128,7 +128,7 @@ def run_multi_agent_system(mode, target, hf_key, model_id):
         repo_id=model_id,
         huggingfacehub_api_token=hf_key,
         max_new_tokens=1500,
-        temperature=0.7,
+        temperature=0.1,
     )
     llm = ChatHuggingFace(llm=endpoint)
 
