@@ -120,7 +120,7 @@ def web_scraper(target: str) -> str:
 # ORCHESTRATOR
 # ============================================================
 def create_agent(llm, tools, system_prompt):
-    return create_react_agent(llm, tools=tools, state_modifier=system_prompt)
+    return create_react_agent(llm, tools=tools, prompt=system_prompt)
 
 
 def run_multi_agent_system(mode, target, hf_key, model_id):
