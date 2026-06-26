@@ -179,8 +179,8 @@ def run_multi_agent_system(mode, target, hf_key, model_id):
 # ============================================================
 def validate_license(key):
     if not KEYGEN_ACCOUNT_ID:
-        st.error("❌ Keygen Account ID missing in secrets!")
-        return False
+        st.warning("⚠️ KEYGEN_ACCOUNT_ID missing in secrets! Bypassing validation for local development.")
+        return True
     url = f"https://api.keygen.sh/v1/accounts/{KEYGEN_ACCOUNT_ID}/licenses/actions/validate-key"
     hdrs = {"Content-Type": "application/vnd.api+json", "Accept": "application/vnd.api+json"}
     try:
